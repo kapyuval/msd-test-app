@@ -1,5 +1,7 @@
 name: PR Validation
 
+runs:
+  using: 'composite'
   jobs:
     lint:
       runs-on: ubuntu-latest
