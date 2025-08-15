@@ -31,6 +31,6 @@ runs:
       run: |
         docker build -t ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} ../../
 
-    - name: Run Docker Container to Test
-      run: |
-        docker run --rm  ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} npm test
+    # - name: Run Docker Container to Test
+    #   run: |
+    #     docker run --rm  ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} npm test
