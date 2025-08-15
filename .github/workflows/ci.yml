@@ -1,4 +1,4 @@
-name: PR Validation
+name: CI Pipeline
 
 on:
   push:
@@ -10,29 +10,9 @@ on:
 
 jobs:
   pr-validation:
-    runs-on: ubuntu-latest
+    # Optionally, ensure 'build' job runs first if needed
     needs: [build]
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Lint Code
-        run: npm run lint
-
-      - name: Run Unit Tests
-        run: npm run test
-
-      - name: Run Code Coverage
-        run: npm run coverage
+    uses: ./.github/workflows/pr-validation.yml
 
   # Build Job (Builds Docker Image, runs tests)
   build:
@@ -83,7 +63,7 @@ jobs:
       - name: Add PR comment on success
         run: |
           if [[ "${{ needs.pr-validation.result }}" == "success" ]]; then
-            echo "PR validation successful! 🚀"
+            echo "PR validation successful!"
           else
             echo "PR validation failed. Please check the logs."
           fi
