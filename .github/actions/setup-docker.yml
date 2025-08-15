@@ -3,9 +3,6 @@ name: Setup Docker
 description: 'Set up Docker to build and push images'
 
 inputs:
-  dockerfile-path:
-    description: 'Path to Dockerfile'
-    required: true
   docker-image-name:
     description: 'Docker image name'
     required: true
