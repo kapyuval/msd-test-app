@@ -29,7 +29,7 @@ runs:
           
     - name: Build Docker image
       run: |
-        docker build -t ${{ inputs.docker-image-name }}:{{ inputs.commit-sha }} .
+        docker build -t ${{ inputs.docker-image-name }}:{{ inputs.commit-sha }} ../../
 
     - name: Run Docker Container to Test
       run: |
