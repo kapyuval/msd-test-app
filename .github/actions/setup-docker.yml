@@ -23,20 +23,20 @@ runs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ commit-sha }}
+        key: ${{ runner.os }}-buildx-${{ inputs.commit-sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
           
     - name: Build Docker image
       run: |
-        docker build -t ${{ inputs.docker-image-name }}:{{ commit-sha }} .
+        docker build -t ${{ inputs.docker-image-name }}:{{ inputs.commit-sha }} .
 
     - name: Run Docker Container to Test
       run: |
-        docker run --rm  ${{ inputs.docker-image-name }}:${{ commit-sha }} npm test
+        docker run --rm  ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} npm test
 
     - name: Upload Docker Image as Artifact
       uses: actions/upload-artifact@v2
       with:
         name: docker-image
-        path: ./${{ inputs.docker-image-name }}:${{ commit-sha }}
+        path: ./${{ inputs.docker-image-name }}:${{ inputs.commit-sha }}
