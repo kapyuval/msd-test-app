@@ -8,8 +8,7 @@ inputs:
     required: true
   commit-sha:
     description: 'Build context for Docker image (default is current directory)'
-    required: false
-    default: '.'
+    required: true
 
 runs:
   using: 'composite'
