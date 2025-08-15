@@ -9,7 +9,7 @@ inputs:
   docker-image-name:
     description: 'Docker image name'
     required: true
-  build-context:
+  commit-sha:
     description: 'Build context for Docker image (default is current directory)'
     required: false
     default: '.'
@@ -18,15 +18,26 @@ runs:
   using: 'composite'
   steps:
     - name: Set up Docker Buildx
-      run: |
-        docker buildx create --use
+      uses: docker/setup-buildx-action@v1
+      
     - name: Cache Docker layers
       uses: actions/cache@v2
       with:
-        path: ~/.docker
-        key: ${{ runner.os }}-docker-${{ hashFiles(inputs.dockerfile-path) }}
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ commit-sha }}
         restore-keys: |
-          ${{ runner.os }}-docker-
+          ${{ runner.os }}-buildx-
+          
     - name: Build Docker image
       run: |
-        docker build -f ${{ inputs.dockerfile-path }} ${{ inputs.build-context }} -t ${{ inputs.docker-image-name }}
+        docker build -t ${{ inputs.docker-image-name }}:{{ commit-sha }} .
+
+    - name: Run Docker Container to Test
+      run: |
+        docker run --rm  ${{ inputs.docker-image-name }}:${{ commit-sha }} npm test
+
+    - name: Upload Docker Image as Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: docker-image
+        path: ./${{ inputs.docker-image-name }}:${{ commit-sha }}
