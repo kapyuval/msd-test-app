@@ -17,15 +17,52 @@ jobs:
     # Optionally, ensure 'build' job runs first if needed
       uses: ./.github/actions/pr-validation.yml
 
-  # Build Job (Builds Docker Image, runs tests)
+  # # Build Job (Builds Docker Image, runs tests)
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Build Docker Image
+  #     uses: ./.github/actions/setup-docker.yml
+  #     with:
+  #       docker-image-name: msd-test-app
+  #       commit-sha: ${{ github.sha }}
+
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Build Docker Image
-      uses: ./.github/actions/setup-docker.yml
-      with:
-        docker-image-name: msd-test-app
-        commit-sha: ${{ github.sha }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Docker Buildx (for caching and optimized builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Cache Docker layers to speed up builds
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # Build Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build -t msd-test-app:${{ github.sha }} .
+
+      # Run tests inside Docker container
+      - name: Run Docker Container to Test
+        run: |
+          docker run --rm msd-test-app:${{ github.sha }} npm test
+
+      # Upload Docker Image as Artifact
+      - name: Upload Docker Image as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: ./msd-test-app:${{ github.sha }}
 
   # Versioning Job (Handles versioning strategy for the app)
   versioning:
