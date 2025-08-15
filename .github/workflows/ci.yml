@@ -78,17 +78,16 @@ jobs:
         run: |
           docker build -t msd-test-app:${{ github.sha }} .
 
-      # # Run tests inside Docker container
-      # - name: Run Docker Container to Test
-      #   run: |
-      #     docker run --rm msd-test-app:${{ github.sha }} npm test
+      - name: Save Docker Image to Tar
+        run: docker save -o msd-test-app.tar msd-test-app:${{ github.sha }}
 
       # Upload Docker Image as Artifact
-      - name: Upload Docker Image as Artifact
+      - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
-          path: ./msd-test-app:${{ github.sha }}
+          path: msd-test-app.tar
+          retention-days: 7
 
   # Versioning Job (Handles versioning strategy for the app)
   versioning:
