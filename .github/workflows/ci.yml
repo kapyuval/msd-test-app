@@ -12,7 +12,7 @@ jobs:
   pr-validation:
     # Optionally, ensure 'build' job runs first if needed
     needs: [build]
-    uses: ./.github/workflows/pr-validation.yml
+    uses: ./.github/actions/pr-validation.yml
 
   # Build Job (Builds Docker Image, runs tests)
   build:
