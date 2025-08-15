@@ -122,8 +122,8 @@ jobs:
 
       - name: Tag the commit with new version
         run: |
-          git tag -a "v${{ env.VERSION  }}" -m "Release version ${{ env.VERSION  }}"
-          git push origin "v${{ env.VERSION  }}"
+          git tag -a "${{ env.VERSION  }}" -m "Release version ${{ env.VERSION  }}"
+          git push origin "${{ env.VERSION  }}"
 
   # PR Comment Job (Optional: to add checks and comments on PR)
   pr-comment:
