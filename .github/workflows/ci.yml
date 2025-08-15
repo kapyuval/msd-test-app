@@ -160,6 +160,7 @@ jobs:
 
       - name: Push Docker image to DockerHub
         run: |
+          docker images
           docker tag msd-test-app:${{ github.sha }} kapyuval/msd-test-app:${{ github.sha }}
           docker push kapyuval/msd-test-app:${{ github.sha }}
           docker push kapyuval/msd-test-app:latest
