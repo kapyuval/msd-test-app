@@ -1,0 +1,32 @@
+name: Setup Docker
+
+description: 'Set up Docker to build and push images'
+
+inputs:
+  dockerfile-path:
+    description: 'Path to Dockerfile'
+    required: true
+  docker-image-name:
+    description: 'Docker image name'
+    required: true
+  build-context:
+    description: 'Build context for Docker image (default is current directory)'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Docker Buildx
+      run: |
+        docker buildx create --use
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: ~/.docker
+        key: ${{ runner.os }}-docker-${{ hashFiles(inputs.dockerfile-path) }}
+        restore-keys: |
+          ${{ runner.os }}-docker-
+    - name: Build Docker image
+      run: |
+        docker build -f ${{ inputs.dockerfile-path }} ${{ inputs.build-context }} -t ${{ inputs.docker-image-name }}
