@@ -34,9 +34,3 @@ runs:
     - name: Run Docker Container to Test
       run: |
         docker run --rm  ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} npm test
-
-    - name: Upload Docker Image as Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: docker-image
-        path: ./${{ inputs.docker-image-name }}:${{ inputs.commit-sha }}
