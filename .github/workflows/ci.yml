@@ -97,6 +97,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up git config
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Get the current version
         run: |
           VERSION=$(git describe --tags --always)
@@ -107,19 +112,19 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
             echo "Skipping version bump"
+            echo "NEW_VERSION=${VERSION}" >> $GITHUB_ENV
           else
             echo "Bumping version"
             # Incrementing the patch version
             VERSION=$(npm version patch --no-git-tag-version)
-            echo "New Version: $VERSION"
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+            echo "New Version: $NEW_VERSION"
           fi
 
       - name: Tag the commit with new version
         run: |
-          git config --global user.email "${{ secrets.GIT_EMAIL }}"
-          git config --global user.name "Yuval Kaplan"
-          git tag -a "v${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-          git push origin "v${{ env.VERSION }}"
+          git tag -a "v${{ env.NEW_VERSION  }}" -m "Release version ${{ env.NEW_VERSION  }}"
+          git push origin "v${{ env.NEW_VERSION  }}"
 
   # PR Comment Job (Optional: to add checks and comments on PR)
   pr-comment:
