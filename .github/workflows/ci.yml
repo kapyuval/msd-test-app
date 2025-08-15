@@ -9,13 +9,38 @@ on:
       - main
 
 jobs:
+  # PR Validation Job (Runs on PRs)
   pr-validation:
-    needs: [build]
     runs-on: ubuntu-latest
+    needs: [build]  # Ensures 'build' job runs before PR validation
+
     steps:
-    - name: PR Validation
-    # Optionally, ensure 'build' job runs first if needed
-      uses: ./.github/actions/pr-validation.yml
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Run Code Coverage
+        run: npm run coverage
+  # pr-validation:
+  #   needs: [build]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: PR Validation
+  #   # Optionally, ensure 'build' job runs first if needed
+  #     uses: ./.github/actions/pr-validation.yml
 
   # # Build Job (Builds Docker Image, runs tests)
   # build:
