@@ -10,16 +10,22 @@ on:
 
 jobs:
   pr-validation:
-    # Optionally, ensure 'build' job runs first if needed
     needs: [build]
-    uses: ./.github/actions/pr-validation.yml
+    runs-on: ubuntu-latest
+    steps:
+    - name: PR Validation
+    # Optionally, ensure 'build' job runs first if needed
+      uses: ./.github/actions/pr-validation.yml
 
   # Build Job (Builds Docker Image, runs tests)
   build:
-    uses: ./.github/actions/setup-docker.yml
-    with:
-      docker-image-name: msd-test-app
-      commit-sha: ${{ github.sha }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Docker Image
+      uses: ./.github/actions/setup-docker.yml
+      with:
+        docker-image-name: msd-test-app
+        commit-sha: ${{ github.sha }}
 
   # Versioning Job (Handles versioning strategy for the app)
   versioning:
