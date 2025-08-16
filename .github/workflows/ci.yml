@@ -85,6 +85,15 @@ jobs:
       commit-sha: ${{ github.sha }}
       version: ${{ needs.versioning.outputs.version }}
 
+  # Docker Publish Job (Publish to DockerHub)
+  helm-check:
+    needs: [docker-publish, versioning]
+    if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
+    uses: ./.github/workflows/helm-check.yml
+    secrets: inherit
+    with:
+      tag: ${{ needs.versioning.outputs.version }}
+
   # Deployment Job using ArgoCD
   # deploy:
   #   runs-on: ubuntu-latest
