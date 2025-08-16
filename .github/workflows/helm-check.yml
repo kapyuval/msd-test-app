@@ -1,0 +1,49 @@
+name: CI - Sync Helm Chart Version (Cross Repo)
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger only on version tags like v1.2.3
+
+jobs:
+  update-helm-chart:
+    runs-on: ubuntu-latest
+    name: Update version in charts repo
+
+    steps:
+    - name: Get App Version from Git Tag
+      id: get_version
+      run: |
+        TAG_NAME=${GITHUB_REF##*/}
+        APP_VERSION=${TAG_NAME#v}
+        echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Clone Helm Charts Repository
+      run: |
+        # Clone helm repo using access token stored in secret
+        git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/kapyuval/msd-test-helm.git
+        cd helm-charts-repo
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Update appVersion and image.tag
+      run: |
+        cd msd-test-helm/charts/msd-test-app
+
+        # Update appVersion in Chart.yaml
+        sed -i "s/^appVersion:.*/appVersion: \"${{ steps.get_version.outputs.app_version }}\"/" Chart.yaml
+
+        # Go to where values file is stored
+        cd ../../env/dev/msd-test-app
+  
+        # Update image.tag in values.yaml
+        sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ steps.get_version.outputs.app_version }}\"/" values.yaml
+
+    - name: Commit and Push Changes
+      run: |
+        cd msd-test-helm
+        git add charts/msd-test-app/Chart.yaml env/dev/msd-test-app/values.yaml
+        git commit -m "Bbump chart version to ${{ steps.get_version.outputs.app_version }}"
+        git push
+
+
