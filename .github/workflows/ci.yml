@@ -65,7 +65,7 @@ jobs:
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
     uses: ./.github/workflows/publish-docker.yml
     with:
-      docker-image-name: kapyuval/msd-test-app
+      docker-image-fullname: kapyuval/msd-test-app
       commit-sha: ${{ github.sha }}
       version: ${{ needs.versioning.outputs.version }}
 
