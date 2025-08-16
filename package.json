@@ -1,6 +1,6 @@
 {
   "name": "msd-test-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -16,11 +16,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-  	"coverage": "react-scripts test --coverage",
+    "coverage": "react-scripts test --coverage",
     "eject": "react-scripts eject",
-	"lint": "eslint src/**/*.js",
+    "lint": "eslint src/**/*.js",
     "lint:fix": "npm run lint -- --fix"
-
   },
   "eslintConfig": {
     "extends": [
