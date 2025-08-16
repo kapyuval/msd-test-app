@@ -4,8 +4,6 @@ outputs:
   version:
     description: "Version"
     value: ${{ steps.set_version.outputs.VERSION }}
-  tag_pushed: 
-    value: ${{ steps.push_tag.outputs.tag_pushed }}
 
 runs:
   using: 'composite'
@@ -46,5 +44,21 @@ runs:
         git commit -m "Bump version to ${{ env.VERSION }}"
         git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
         git push && git push --tags
-        run: echo "tag_pushed=true" >> $GITHUB_OUTPUT
       shell: bash
+
+      - name: Save flag if tag pushed
+        run: |
+           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+             echo "tag_pushed=true" > tag-info.txt
+          else
+            echo "tag_pushed=true" > tag-info.txt
+          fi
+        shell: bash
+        
+      - name: Upload tag flag artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tag-flag
+          path: tag-info.txt
+        shell: bash
