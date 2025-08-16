@@ -9,6 +9,7 @@ on:
       - main
 
 jobs:
+
   # PR Validation Job (Runs on PRs)
   pr-validation:
     needs: [build] # To make sure image is built properly as well
