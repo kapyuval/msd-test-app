@@ -25,7 +25,7 @@ jobs:
       - name: Download image tarball
         uses: actions/download-artifact@v4
         with:
-          name: msd-test-app-image
+          name: ${{ github.event.repository.name }}-image
 
       - name: Load Docker image
         run: |
@@ -39,9 +39,9 @@ jobs:
 
       - name: Push Docker image to DockerHub
         run: |
-          docker tag msd-test-app:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:${{ inputs.commit-sha }}
-          docker tag msd-test-app:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:${{ inputs.version }}
-          docker tag msd-test-app:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:latest
-          docker push kapyuval/msd-test-app:${{ inputs.commit-sha }}
-          docker push kapyuval/msd-test-app:${{ inputs.version }}
-          docker push kapyuval/msd-test-app:latest
+          docker tag ${{ github.event.repository.name }}:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:${{ inputs.commit-sha }}
+          docker tag ${{ github.event.repository.name }}:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:${{ inputs.version }}
+          docker tag ${{ github.event.repository.name }}:${{ inputs.commit-sha }} ${{ inputs.docker-image-fullname }}:latest
+          docker push ${{ inputs.docker-image-fullname }}:${{ inputs.commit-sha }}
+          docker push ${{ inputs.docker-image-fullname }}:${{ inputs.version }}
+          docker push ${{ inputs.docker-image-fullname }}:latest
