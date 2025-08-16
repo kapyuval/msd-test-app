@@ -38,5 +38,5 @@ jobs:
       run: |
         cd msd-test-helm
         git add charts/msd-test-app/Chart.yaml env/dev/msd-test-app/values.yaml
-        git commit -m "Bump chart version to ${{ input.tag }}"
+        git commit -m "Bump chart version to ${{ inputs.tag }}"
         git push
