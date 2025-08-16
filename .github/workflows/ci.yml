@@ -45,9 +45,9 @@ jobs:
       - name: Save flag if tag pushed
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-             echo "tag_pushed=true" > tag-info.txt
+             echo "tag_pushed=true" > tag_flag.txt
           else
-            echo "tag_pushed=false" > tag-info.txt
+            echo "tag_pushed=false" > tag_flag.txt
           fi
         shell: bash
       
