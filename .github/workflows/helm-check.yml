@@ -15,13 +15,6 @@ jobs:
     needs: read_flag_from_artifact
     if: inputs.tag == 'true'
     steps:
-    - name: Get App Version from Git Tag
-      id: get_version
-      run: |
-        TAG_NAME=${GITHUB_REF##*/}
-        APP_VERSION=${TAG_NAME#v}
-        echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
-
     - name: Clone Helm Charts Repository
       run: |
         # Clone helm repo using access token stored in secret
