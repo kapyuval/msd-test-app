@@ -20,13 +20,14 @@ jobs:
         # Clone helm repo using access token stored in secret
         git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/${{ inputs.helm-repo-name }}.git
         REPO_NAME=$(echo "${{ inputs.helm-repo-name }}" | cut -d'/' -f2)
+        echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
         cd $REPO_NAME
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Update appVersion and image.tag
       run: |
-        cd ${{ inputs.helm-repo-name }}/charts/${{ github.event.repository.name }}
+        cd $REPO_NAME/charts/${{ github.event.repository.name }}
 
         # Update appVersion in Chart.yaml
         sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.tag }}\"/" Chart.yaml
