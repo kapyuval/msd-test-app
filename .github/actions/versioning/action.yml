@@ -2,8 +2,6 @@ name:  Versioning
 
 runs:
   using: 'composite'
-  outputs:
-    version: ${{ steps.set_version.outputs.VERSION }}
   steps:
     - name: Set up git config
       run: |
