@@ -15,15 +15,15 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tag-flag
-          path: ./tag
+          name: flag-artifact
 
       - name: Read flag
         id: read_flag
         run: |
-          VALUE=$(cat ./tag/tag_flag.txt | grep tag_pushed | cut -d '=' -f2)
+          source tag_flag.txt
+          VALUE=$(cat tag_flag.txt | grep tag_pushed | cut -d '=' -f2)
           echo "tag_pushed=$VALUE" >> $GITHUB_OUTPUT
-    
+          
   update-helm-chart:
     runs-on: ubuntu-latest
     name: Update version in charts repo

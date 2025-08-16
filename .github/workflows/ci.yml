@@ -41,6 +41,21 @@ jobs:
         id: versioning
       # Optionally, ensure 'build' job runs first if needed
         uses: ./.github/actions/versioning
+        
+      - name: Save flag if tag pushed
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+             echo "tag_pushed=true" > tag_flag.txt
+          else
+            echo "tag_pushed=false" > tag_flag.txt
+          fi
+        shell: bash
+      
+      - name: Upload tag flag artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flag-artifact
+          path: tag_flag.txt
 
   # PR Comment Job (Optional: to add checks and comments on PR)
   pr-comment:
