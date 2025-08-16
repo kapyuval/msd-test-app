@@ -64,6 +64,7 @@ jobs:
     needs: [pr-validation,versioning] # Don't proceed to publish if pr-validation or versioning failed
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
     uses: ./.github/workflows/publish-docker.yml
+    secrets: inherit
     with:
       docker-image-fullname: kapyuval/msd-test-app
       commit-sha: ${{ github.sha }}
