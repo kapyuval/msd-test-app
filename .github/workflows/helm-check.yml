@@ -7,12 +7,6 @@ on:
         description: 'tag'
         required: true
         type: string
-      helm-repo:
-        required: true
-        type: string
-      app-name:
-        required: true
-        type: string
 jobs:
   update-helm-chart:
     runs-on: ubuntu-latest
@@ -42,6 +36,6 @@ jobs:
     - name: Commit and Push Changes
       run: |
         cd msd-test-helm
-        git add charts/${{ inputs.app-name }}/Chart.yaml env/dev/${{ inputs.app-name }}/values.yaml
+        git add charts/${{ github.event.repository.name }}/Chart.yaml env/dev/${{ github.event.repository.name }}/values.yaml
         git commit -m "Bump chart version to ${{ inputs.tag }}"
         git push
