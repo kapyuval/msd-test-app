@@ -7,27 +7,27 @@ on:
       - completed
 
 jobs:
-  check-tags:
+  read_flag:
     runs-on: ubuntu-latest
-    name: Check if a tag was pushed
+    outputs:
+      tag_pushed: ${{ steps.read_flag.outputs.tag_pushed }}
     steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: tag-flag
-        path: ./tag
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tag-flag
+          path: ./tag
 
-    - name: Read tag flag
-      id: check_tag
-      run: |
-        TAG_PUSHED=$(cat ./tag/tag-info.txt | grep tag_pushed | cut -d '=' -f2)
-        echo "tag_pushed=$TAG_PUSHED" >> $GITHUB_OUTPUT
+      - name: Read flag
+        id: read_flag
+        run: |
+          VALUE=$(cat ./tag/tag_flag.txt | grep tag_pushed | cut -d '=' -f2)
+          echo "tag_pushed=$VALUE" >> $GITHUB_OUTPUT
     
   update-helm-chart:
     runs-on: ubuntu-latest
     name: Update version in charts repo
-    if: ${{ steps.check_tags.outputs.tag_pushed == 'true' }}
-    
+    if: needs.read_flag.outputs.tag_pushed == 'true'
     steps:
     - name: Get App Version from Git Tag
       id: get_version
