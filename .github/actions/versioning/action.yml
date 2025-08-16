@@ -47,7 +47,7 @@ runs:
 
     - name: Save flag if tag pushed
       run: |
-         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
            echo "tag_pushed=true" > tag-info.txt
         else
           echo "tag_pushed=false" > tag-info.txt
