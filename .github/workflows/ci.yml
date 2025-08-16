@@ -79,7 +79,7 @@ jobs:
     
     with:
       tag: ${{ needs.versioning.outputs.version }}
-      helm-repo-name: ${{ env.HELM_REPO_NAME }}
+      helm-repo-name: ${{ vars.HELM_REPO_NAME }}
 
   # Deployment Job using ArgoCD
   # deploy:
