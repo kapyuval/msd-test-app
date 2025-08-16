@@ -52,7 +52,6 @@ jobs:
         shell: bash
       
       - name: Upload tag flag artifact
-        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: flag-artifact
