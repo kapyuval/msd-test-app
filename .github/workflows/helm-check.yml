@@ -19,19 +19,19 @@ jobs:
       run: |
         # Clone helm repo using access token stored in secret
         git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/${{ inputs.helm-repo-name }}.git
-        cd helm-charts-repo
+        cd ${{ inputs.helm-repo-name }}
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Update appVersion and image.tag
       run: |
-        cd msd-test-helm/charts/msd-test-app
+        cd ${{ inputs.helm-repo-name }}/charts/${{ github.event.repository.name }}
 
         # Update appVersion in Chart.yaml
         sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.tag }}\"/" Chart.yaml
 
         # Go to where values file is stored
-        cd ../../env/dev/msd-test-app
+        cd ../../env/dev/${{ github.event.repository.name }}
   
         # Update image.tag in values.yaml
         sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ inputs.tag }}\"/" values.yaml
