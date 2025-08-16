@@ -13,7 +13,7 @@ jobs:
   build:
     uses: ./.github/workflows/setup-docker.yml
     with:
-      docker-image-name: msd-test-app
+      docker-image-name: ${{ github.event.repository.name }}
       commit-sha: ${{ github.sha }}
 
   # PR Validation Job (Runs on PRs)
@@ -66,7 +66,7 @@ jobs:
     uses: ./.github/workflows/publish-docker.yml
     secrets: inherit
     with:
-      docker-image-fullname: kapyuval/msd-test-app
+      docker-image-fullname: ${{ github.repository }}
       commit-sha: ${{ github.sha }}
       version: ${{ needs.versioning.outputs.version }}
 
@@ -76,8 +76,10 @@ jobs:
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
     uses: ./.github/workflows/helm-check.yml
     secrets: inherit
+    
     with:
       tag: ${{ needs.versioning.outputs.version }}
+      helm-repo-name: ${{ vars.HELM_REPO_NAME }}
 
   # Deployment Job using ArgoCD
   # deploy:

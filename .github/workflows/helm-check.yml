@@ -7,7 +7,9 @@ on:
         description: 'tag'
         required: true
         type: string
-
+      helm-repo-name:
+        required: true
+        type: string
 jobs:
   update-helm-chart:
     runs-on: ubuntu-latest
@@ -16,7 +18,7 @@ jobs:
     - name: Clone Helm Charts Repository
       run: |
         # Clone helm repo using access token stored in secret
-        git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/kapyuval/msd-test-helm.git
+        git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/${{ inputs.helm-repo-name }}.git
         cd helm-charts-repo
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -37,6 +39,6 @@ jobs:
     - name: Commit and Push Changes
       run: |
         cd msd-test-helm
-        git add charts/msd-test-app/Chart.yaml env/dev/msd-test-app/values.yaml
+        git add charts/${{ github.event.repository.name }}/Chart.yaml env/dev/${{ github.event.repository.name }}/values.yaml
         git commit -m "Bump chart version to ${{ inputs.tag }}"
         git push
