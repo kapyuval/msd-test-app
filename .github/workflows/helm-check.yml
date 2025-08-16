@@ -7,10 +7,9 @@ on:
       - completed
 
 jobs:
-  update-helm-chart:
+  check-tags:
     runs-on: ubuntu-latest
-    name: Update version in charts repo
-
+    name: Check if a tag was pushed
     steps:
     - name: Download artifact
       uses: actions/download-artifact@v4
@@ -23,9 +22,14 @@ jobs:
       run: |
         TAG_PUSHED=$(cat ./tag/tag-info.txt | grep tag_pushed | cut -d '=' -f2)
         echo "tag_pushed=$TAG_PUSHED" >> $GITHUB_OUTPUT
-
+    
+  update-helm-chart:
+    runs-on: ubuntu-latest
+    name: Update version in charts repo
+    if: steps.check_tags.outputs.tag_pushed == 'true'
+    
+    steps:
     - name: Get App Version from Git Tag
-      if: steps.check_tag.outputs.tag_pushed == 'true'
       id: get_version
       run: |
         TAG_NAME=${GITHUB_REF##*/}
@@ -33,7 +37,6 @@ jobs:
         echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
 
     - name: Clone Helm Charts Repository
-      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         # Clone helm repo using access token stored in secret
         git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/kapyuval/msd-test-helm.git
@@ -42,7 +45,6 @@ jobs:
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Update appVersion and image.tag
-      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         cd msd-test-helm/charts/msd-test-app
 
@@ -56,7 +58,6 @@ jobs:
         sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ steps.get_version.outputs.app_version }}\"/" values.yaml
 
     - name: Commit and Push Changes
-      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         cd msd-test-helm
         git add charts/msd-test-app/Chart.yaml env/dev/msd-test-app/values.yaml
