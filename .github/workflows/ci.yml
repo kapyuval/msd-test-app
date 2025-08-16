@@ -14,6 +14,9 @@ jobs:
     needs: [build] # To make sure image is built properly as well
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: PR Validation
       # Optionally, ensure 'build' job runs first if needed
         uses: ./.github/actions/pr-validation
