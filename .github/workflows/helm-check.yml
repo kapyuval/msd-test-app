@@ -15,7 +15,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tag-flag
+          name: tag_flag
           path: ./tag
 
       - name: Read flag
