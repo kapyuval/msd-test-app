@@ -13,13 +13,17 @@ runs:
 
     - name: Install dependencies
       run: npm install
+      shell: bash
 
     - name: Lint Code
       run: npm run lint
+      shell: bash
 
     - name: Run Unit Tests
       run: npm run test
+      shell: bash
 
     - name: Run Code Coverage
       run: npm run coverage
+      shell: bash
 
