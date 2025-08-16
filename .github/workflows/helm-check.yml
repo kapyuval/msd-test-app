@@ -26,13 +26,13 @@ jobs:
         cd msd-test-helm/charts/msd-test-app
 
         # Update appVersion in Chart.yaml
-        sed -i "s/^appVersion:.*/appVersion: \"${{ input.tag }}\"/" Chart.yaml
+        sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.tag }}\"/" Chart.yaml
 
         # Go to where values file is stored
         cd ../../env/dev/msd-test-app
   
         # Update image.tag in values.yaml
-        sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ input.tag }}\"/" values.yaml
+        sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ inputs.tag }}\"/" values.yaml
 
     - name: Commit and Push Changes
       run: |
