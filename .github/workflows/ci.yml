@@ -62,17 +62,13 @@ jobs:
             echo "Skipping version bump"
           fi
 
-      - name: Commit updated version if version was changed
+      - name: Commit and tag updated version if version was changed
         if: github.ref == 'refs/heads/main'
         run: |
           git add package.json package-lock.json
           git commit -m "Bump version to ${{ env.VERSION }}"
-
-      - name: Tag the commit with new version if version was changed
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git tag -a "${{ env.VERSION  }}" -m "Release version ${{ env.VERSION  }}"
-          git push origin "${{ env.VERSION  }}"
+          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
+          git push && git push --tags
 
   # PR Comment Job (Optional: to add checks and comments on PR)
   pr-comment:
