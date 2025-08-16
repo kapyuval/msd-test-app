@@ -60,4 +60,3 @@ runs:
       with:
         name: tag-flag
         path: tag-info.txt
-      shell: bash
