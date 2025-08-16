@@ -33,12 +33,13 @@ jobs:
   versioning:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set_version.outputs.VERSION }}
+      version: ${{ steps.versioning.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Versioning
+        id: versioning
       # Optionally, ensure 'build' job runs first if needed
         uses: ./.github/actions/versioning
 
