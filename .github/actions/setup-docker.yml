@@ -29,8 +29,15 @@ runs:
           
     - name: Build Docker image
       run: |
-        docker build -t ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} ../../
+        docker build -t ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} .
 
-    # - name: Run Docker Container to Test
-    #   run: |
-    #     docker run --rm  ${{ inputs.docker-image-name }}:${{ inputs.commit-sha }} npm test
+    - name: Save Docker Image to Tar
+      run: docker save -o msd-test-app.tar msd-test-app:${{ commit-sha }}
+
+    # Upload Docker Image as Artifact
+    - name: Upload Docker Image Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: msd-test-app-image
+        path: msd-test-app.tar
+        retention-days: 7
