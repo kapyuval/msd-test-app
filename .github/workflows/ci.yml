@@ -68,7 +68,8 @@ jobs:
           git add package.json package-lock.json
           git commit -m "Bump version to ${{ env.VERSION }}"
 
-      - name: Tag the commit with new version
+      - name: Tag the commit with new version if version was changed
+        if: github.ref == 'refs/heads/main'
         run: |
           git tag -a "${{ env.VERSION  }}" -m "Release version ${{ env.VERSION  }}"
           git push origin "${{ env.VERSION  }}"
@@ -93,7 +94,7 @@ jobs:
   # Docker Publish Job (Publish to DockerHub)
   docker-publish:
     runs-on: ubuntu-latest
-    needs: [build,versioning] # Don't proceed to publish if build or versioning failed
+    needs: [pr-validation,versioning] # Don't proceed to publish if pr-validation or versioning failed
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
 
     steps:
@@ -118,8 +119,8 @@ jobs:
       - name: Push Docker image to DockerHub
         run: |
           docker tag msd-test-app:${{ github.sha }} kapyuval/msd-test-app:${{ github.sha }}
-          docker tag msd-test-app:${{ github.sha }} msd-test-app:${{ needs.versioning.outputs.version }}
-          docker tag msd-test-app:${{ github.sha }} tag msd-test-app:${{ needs.versioning.outputs.version }}
+          docker tag msd-test-app:${{ github.sha }} kapyuval/msd-test-app:${{ needs.versioning.outputs.version }}
+          docker tag msd-test-app:${{ github.sha }} kapyuval/msd-test-app:latest
           docker push kapyuval/msd-test-app:${{ github.sha }}
           docker push kapyuval/msd-test-app:${{ needs.versioning.outputs.version }}
           docker push kapyuval/msd-test-app:latest
