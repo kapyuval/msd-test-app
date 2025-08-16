@@ -12,7 +12,6 @@ jobs:
   update-helm-chart:
     runs-on: ubuntu-latest
     name: Update version in charts repo
-    needs: read_flag_from_artifact
     if: inputs.tag == 'true'
     steps:
     - name: Clone Helm Charts Repository
