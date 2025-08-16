@@ -1,9 +1,10 @@
 name: CI - Sync Helm Chart Version (Cross Repo)
 
 on:
-  push:
-    tags:
-      - 'v*'  # Trigger only on version tags like v1.2.3
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
 
 jobs:
   update-helm-chart:
@@ -11,7 +12,20 @@ jobs:
     name: Update version in charts repo
 
     steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: tag-flag
+        path: ./tag
+
+    - name: Read tag flag
+      id: check_tag
+      run: |
+        TAG_PUSHED=$(cat ./tag/tag-info.txt | grep tag_pushed | cut -d '=' -f2)
+        echo "tag_pushed=$TAG_PUSHED" >> $GITHUB_OUTPUT
+
     - name: Get App Version from Git Tag
+      if: steps.check_tag.outputs.tag_pushed == 'true'
       id: get_version
       run: |
         TAG_NAME=${GITHUB_REF##*/}
@@ -19,6 +33,7 @@ jobs:
         echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
 
     - name: Clone Helm Charts Repository
+      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         # Clone helm repo using access token stored in secret
         git clone https://x-access-token:${{ secrets.HELM_REPO_PAT }}@github.com/kapyuval/msd-test-helm.git
@@ -27,6 +42,7 @@ jobs:
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Update appVersion and image.tag
+      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         cd msd-test-helm/charts/msd-test-app
 
@@ -40,10 +56,9 @@ jobs:
         sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ steps.get_version.outputs.app_version }}\"/" values.yaml
 
     - name: Commit and Push Changes
+      if: steps.check_tag.outputs.tag_pushed == 'true'
       run: |
         cd msd-test-helm
         git add charts/msd-test-app/Chart.yaml env/dev/msd-test-app/values.yaml
         git commit -m "Bbump chart version to ${{ steps.get_version.outputs.app_version }}"
         git push
-
-
