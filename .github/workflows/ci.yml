@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Build Docker Image
-      uses: ./.github/workflows/setup-docker.yml
+      uses: ../.github/workflows/setup-docker.yml
       with:
         docker-image-name: msd-test-app
         commit-sha: ${{ github.sha }}
