@@ -37,7 +37,6 @@ runs:
       shell: bash
 
     - name: Commit and tag updated version if version was changed
-      id: push_tag
       if: github.ref == 'refs/heads/main'
       run: |
         git add package.json package-lock.json
@@ -51,7 +50,7 @@ runs:
            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
              echo "tag_pushed=true" > tag-info.txt
           else
-            echo "tag_pushed=true" > tag-info.txt
+            echo "tag_pushed=false" > tag-info.txt
           fi
         shell: bash
         
