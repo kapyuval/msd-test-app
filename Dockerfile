@@ -27,7 +27,9 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Change ownership to non-root user
-RUN chown -R appuser:appgroup /usr/share/nginx/html
+USER root
+RUN mkdir -p /var/cache/nginx /var/run /etc/nginx \
+    && chown -R appuser:appgroup /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
 
 # Use non-root user
 USER appuser
