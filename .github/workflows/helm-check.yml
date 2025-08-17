@@ -41,6 +41,6 @@ jobs:
     - name: Commit and Push Changes
       run: |
         cd msd-test-helm
-        git add charts/${{ github.event.repository.name }}/Chart.yaml env/dev/${{ github.event.repository.name }}/values.yaml
+        git add charts/${{ github.event.repository.name }}/Chart.yaml apps/${{ github.event.repository.name }}/dev/values.yaml
         git commit -m "Bump chart version to ${{ inputs.tag }}"
         git push
