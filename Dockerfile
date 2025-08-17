@@ -26,6 +26,9 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copy built files from builder
 COPY --from=builder /app/build /usr/share/nginx/html
 
+# Copy custom nginx config with fixed pid path
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Change ownership to non-root user
 USER root
 RUN mkdir -p /var/cache/nginx /var/run /etc/nginx \
