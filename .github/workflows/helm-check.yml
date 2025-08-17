@@ -33,7 +33,7 @@ jobs:
         sed -i "s/^appVersion:.*/appVersion: \"${{ inputs.tag }}\"/" Chart.yaml
 
         # Go to where values file is stored
-        cd ../../env/dev/${{ github.event.repository.name }}
+        cd ../../apps/${{ github.event.repository.name }}/dev
   
         # Update image.tag in values.yaml
         sed -i "s/^\([[:space:]]*tag:\).*/\1 \"${{ inputs.tag }}\"/" values.yaml
