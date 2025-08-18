@@ -59,7 +59,7 @@ jobs:
             echo "PR validation failed. Please check the logs."
           fi
 
-  # Docker Publish Job (Publish to DockerHub)
+  # Docker Publish Job (Publish to DockerHub) - Expected to have DockerHub username and password in secrets: DOCKER_USERNAME and DOCKER_PASSWORD
   docker-publish:
     needs: [pr-validation,versioning] # Don't proceed to publish if pr-validation or versioning failed
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
@@ -70,7 +70,7 @@ jobs:
       commit-sha: ${{ github.sha }}
       version: ${{ needs.versioning.outputs.version }}
 
-  # Docker Publish Job (Publish to DockerHub)
+  # Helm app verison/image version changes (Publish to the Helm repo) - Expected to have HELM_REPO_NAME set and a git token secret HELM_REPO_PAT for accessing the other repo
   helm-check:
     needs: [versioning,docker-publish]
     if: github.ref == 'refs/heads/main' # Deploy only if it's the main branch
@@ -80,19 +80,3 @@ jobs:
     with:
       tag: ${{ needs.versioning.outputs.version }}
       helm-repo-name: ${{ vars.HELM_REPO_NAME }}
-
-  # Deployment Job using ArgoCD
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: docker-publish
-  #   if: github.ref == 'refs/heads/main' # Only deploy from main branch
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-
-  #     - name: Deploy to production (example)
-  #       run: |
-  #         echo "Deploying version ${{ env.VERSION }} to production!"
-  #         # Example: Replace this with your deploy command
-  #         # kubectl apply -f deployment.yaml
